@@ -44,7 +44,7 @@ jobs:
       
       - name: Upload submission log
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: submission-log
           path: submission-log.txt
