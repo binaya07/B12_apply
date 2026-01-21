@@ -1,0 +1,50 @@
+name: B12 Application Submission
+
+# Trigger on push to main branch or manually via workflow dispatch
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Your name'
+        required: true
+        type: string
+      email:
+        description: 'Your email'
+        required: true
+        type: string
+      resume_link:
+        description: 'Link to your resume (PDF, HTML, or LinkedIn)'
+        required: true
+        type: string
+
+jobs:
+  submit-application:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Submit B12 Application
+        env:
+          B12_NAME: ${{ github.event.inputs.name || 'Your Name' }}
+          B12_EMAIL: ${{ github.event.inputs.email || 'you@example.com' }}
+          B12_RESUME_LINK: ${{ github.event.inputs.resume_link || 'https://your-resume-link.com' }}
+          B12_REPOSITORY_LINK: ${{ github.server_url }}/${{ github.repository }}
+          B12_ACTION_RUN_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python b12test.py
+      
+      - name: Upload submission log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: submission-log
+          path: submission-log.txt
